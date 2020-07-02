@@ -1,0 +1,11 @@
+{
+    "runtime": {
+        "arguments": "",
+        "version": "15.80.50.34"
+    },
+
+    "startup_app": {
+        "uuid": "app1",
+        "url": "https://example.com"
+    }
+}
