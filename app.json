@@ -10,7 +10,7 @@
         "name": "Platform app seed local"
     },
     "platform": {
-        "uuid": "performance",
+        "uuid": "performance_app",
         "applicationIcon": "https://openfin.github.io/golden-prototype/favicon.ico",
         "autoShow": true,
         "providerUrl": "http://localhost:5555/provider.html",
@@ -53,7 +53,11 @@
     "snapshot": {
         "windows": [
             {
-                "url": "http://localhost:5555/analytics-window.html"
+                "url": "http://localhost:5555/analytics-window.html",
+                "name": "performance_window"
+            }, 
+            {
+                
             }
         ]
     }
