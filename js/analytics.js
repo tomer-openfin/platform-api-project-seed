@@ -1,21 +1,15 @@
-import SimpleMetric from './simple-metric.js';
+import SimpleMetrics from './simple-metric.js';
 (async () => {
+    console.log('in analytics');
     const clientBus = await fin.InterApplicationBus.Channel.connect('internal-performance-channel');
-
+    const simpleMetrics = new SimpleMetrics([], document.getElementById('simple-metrics'));
+    console.log(clientBus);
     clientBus.register('update', (payload, identity) => {
-        updateSimpleMetrics(payload);
+        simpleMetrics.setMetrics(payload).render();
     });
     
     const startTimeMs = Date.now();
     const platform = fin.Platform.getCurrentSync();
     
-    const updateSimpleMetrics = payload => {
-        const simpleMetrics = document.getElementById('simple-metrics');
-        simpleMetrics.innerHTML = '';
-        payload.array.forEach(item => {
-            simpleMetrics.appendChild(new SimpleMetric(item.topic, ms(item.time)));
-        });
-    }
-    
-    const ms = timeInMs => `${Math.round(timeInMs/1000, 4)} sec`
+    // const ms = timeInMs => `${Math.round(timeInMs/1000, 4)} sec`
 })();

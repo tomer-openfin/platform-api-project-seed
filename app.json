@@ -57,7 +57,23 @@
                 "name": "performance_window"
             }, 
             {
-                
+                "layout": {
+                    "content": [
+                        {
+                            "type": "stack",
+                            "content": [
+                                {
+                                    "type": "component",
+                                    "componentName": "view",
+                                    "componentState": {
+                                        "processAffinity": "ps_1",
+                                        "url": "https://cdn.openfin.co/embed-web/chart.html"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
             }
         ]
     }
