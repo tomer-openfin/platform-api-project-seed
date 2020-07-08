@@ -6,13 +6,17 @@
         <title>OpenFin Template</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="module" src="js/analytics.js"></script>
+        <script type="module" src="js/performance/performance-window.js"></script>
+        <link rel="stylesheet" href="styles/perf.css"></link>
     </head>
     <body>
         <div>
             <div class="big-title">OpenFin Analytics Panel</div>
-            <div id="startup">
-                <div id="simple-metrics"></div>
+            <div class="row">
+                <div class="column" id="simple-metrics"></div>
+            </div>
+            <div class="row">
+                <div class="column" id="time-table"></div>
             </div>
         </div>
     </body>

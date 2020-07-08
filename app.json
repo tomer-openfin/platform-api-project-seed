@@ -53,7 +53,7 @@
     "snapshot": {
         "windows": [
             {
-                "url": "http://localhost:5555/analytics-window.html",
+                "url": "http://localhost:5555/performance-window.html",
                 "name": "performance_window"
             }, 
             {
