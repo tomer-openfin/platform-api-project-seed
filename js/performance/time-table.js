@@ -7,7 +7,7 @@ export default class TimeTable {
     }
 
     updateEnteries(newEnteries) {
-        this.enteries = newEnteries;
+        this.enteries = newEnteries.sort((eventA, eventB) => eventA.timestamp - eventB.timestamp);
         this.startTime = this.enteries[0].timestamp;
         this.endTime = this.enteries[this.enteries.length - 1].timestamp;
         this.totalTime = this.endTime - this.startTime;
@@ -43,9 +43,8 @@ export default class TimeTable {
     buildTable = () => {
         let dt;
         let prev;
-        const sortedEnteries = this.enteries.sort((eventA, eventB) => eventA.timestamp - eventB.timestamp);
 
-        return sortedEnteries.reduce((res, entery) => {
+        return this.enteries.reduce((res, entery) => {
             if(prev) {
                 dt = entery.timestamp - prev.timestamp;
                 res.push(
