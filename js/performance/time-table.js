@@ -17,7 +17,7 @@ export default class TimeTable {
     render = () => {
         // const metricElems = this.metrics.map(metric => this.buildMetric(metric.topic, metric.identity, metric.time));
         const res = html
-        `<table style="width:100%">
+        `<table class="window">
         <tr>
         <th>description</th>
         <th>time in ms</th>
@@ -33,10 +33,10 @@ export default class TimeTable {
     buildEntery = (from, to, dt, time, percentOfTotal) => {
         return html`        
         <tr>
-        <th>${from} to ${to}</th>
-        <th>${dt}</th>
-        <th>${time}</th>
-        <th>${percentOfTotal}</th>
+        <td>${from} to ${to}</td>
+        <td>${dt}</td>
+        <td>${time}</td>
+        <td>${percentOfTotal}</td>
         </tr>`
     }
 

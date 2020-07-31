@@ -4,7 +4,12 @@ async function main() {
     const logger = new Logger();
     const uuid = fin.me.identity.uuid;
     await logger.registerChannel();
-    // logger.push({uuid}, 'before-platform-init', 'platform');
+    logger.updateAppPerformanceReport({
+        identity: {uuid}, 
+        name: 'before-platform-init', 
+        target: 'platform',
+        time: Date.now()
+    });
     
     fin.Platform.init({
         overrideCallback: async (Provider) => {
@@ -13,11 +18,11 @@ async function main() {
                     if(options.name === 'performance_window') {
                         return await super.createWindow(options);
                     }
-                    // logger.push({uuid, name: options.name || 'nameless window'}, 'creating window', 'platform');
+                    // logger.updateAppPerformanceReport({uuid, name: options.name || 'nameless window'}, 'creating window', 'platform');
                     const win = await super.createWindow(options);
 
                     setupWindowListeners(win);
-                    // logger.push({uuid, name: options.name || 'nameless window'}, `created-window`, 'platform');
+                    // logger.updateAppPerformanceReport({uuid, name: options.name || 'nameless window'}, `created-window`, 'platform');
     
                     return win;
                 }
@@ -29,7 +34,13 @@ async function main() {
             return new Override();
         }
     }).then(payload => {
-        // logger.push({uuid}, 'after-platform-init', 'platform').dispatch();
+        logger.updateAppPerformanceReport({
+            identity: {uuid}, 
+            name: 'after-platform-init', 
+            target: 'platform',
+            time: Date.now(),
+            payload
+        });
     
         const p = fin.Platform.getCurrentSync();
         setupPlatformListeners(p);
@@ -39,7 +50,7 @@ async function main() {
         // window.on('layout-initialized', event => logger.push(window.identity, 'layout-initialized', 'window').dispatch());
         // window.on('window-initialized', event => logger.push(window.identity, 'layout-window', 'window').dispatch());
         // window.on('shown', event => logger.push(window.identity, 'window-shown', 'window').dispatch());
-        window.on('performance-report', payload => logger.bulkPush(performanceReportToArrayOfEvents(payload)));
+        window.on('performance-report', payload => logger.updateWindowPerformanceReport(payload, window.identity));
     }
     
     function setupViewListeners(view) {
@@ -48,20 +59,21 @@ async function main() {
     }
     
     function setupPlatformListeners(platform) {
-        // platform.on('platform-api-ready', event => logger.push({uuid}, 'platform-api-ready', 'platform').dispatch());
-        // platform.on('platform-snapshot-applied', event => logger.push({uuid}, 'platform-snapshot-applied', 'platform').dispatch());
+        platform.once('platform-api-ready', event => logger.updateAppPerformanceReport({
+            identity: {uuid}, 
+            name: 'platform-api-ready', 
+            target: 'platform',
+            payload: event,
+            time: Date.now()
+        }));
+        platform.once('platform-snapshot-applied', event => logger.updateAppPerformanceReport({
+            identity: {uuid}, 
+            name: 'initial-platform-snapshot-applied', 
+            target: 'platform', 
+            payload: event,
+            time: Date.now()
+        }));
     }
-
-    function performanceReportToArrayOfEvents (report) {
-        console.log('performanceReportToArrayOfEvents');
-        console.log(report);
-        return Object.keys(report.timing).map(key =>
-            [{uuid, name: report.name}, key, 'window', report.timing[key]]
-        ).filter(item => item[3]) // get rid of items without a timestamp
-    }
-    
-    const performanceWindow = fin.Window.wrapSync({uuid: 'performance_app', name: 'performance_window'});
-    performanceWindow.on('initialized', () => logger.dispatch());
 }
 
 main();

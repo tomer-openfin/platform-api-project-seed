@@ -1,11 +1,53 @@
-.row {
-    display: flex;
-}
-  
-.column {
-    flex: 1;
+.big-title {
+    padding: 20px;
+    font-size: 2em;
 }
 
-th {
+.window {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+  }
+  
+.window td, .window th {
+    border: 1px solid #ddd;
+    padding: 5px;
+    width: 1px;
+    white-space: nowrap;
+  }
+  
+.window tr:nth-child(even){background-color: #f2f2f2;}
+  
+.window tr:hover {background-color: #ddd;}
+  
+.window th {
+    padding-top: 8px;
+    padding-bottom: 8px;
     text-align: left;
-}
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  .tooltip {
+    position: relative;
+    border-bottom: 1px dotted black;
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+  
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+
+    white-space: normal;
+    width: 300px;
+    padding: 5px 10px;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }

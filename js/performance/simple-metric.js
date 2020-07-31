@@ -1,27 +1,25 @@
 import { html, render } from 'https://unpkg.com/lit-html@1.0.0/lit-html.js';
 
-export default class SimpleMetrics {
-    constructor(metrics, target, title) {
-        this.metrics = metrics;
-        this.target = target;
-        this.title = title;
+export default class SimpleMetric {
+    constructor(parent, entery) {
+        this.parent = parent;
+        this.entery = entery;
+        this.render();
     }
 
     render = () => {
-        const metricElems = this.metrics.map(metric => this.buildMetric(metric.topic, metric.identity, metric.time));
-        const res = html
-        `<div>${this.title}</div>
-        <ul>${metricElems}</ul>`;
-        return render(res, this.target);
+        // const metricElems = this.entery.map(metric => this.buildMetric(metric.topic, metric.identity, metric.timestamp));
+        const elem = html`<ul>${this.buildMetric(this.entery)}</ul>`;
+        return render(elem, this.parent);
     }
 
-    buildMetric = (topic, identity, time) => {
+    buildMetric = ({identity, name, time}) => {
         const shortenedIdentity = this.buildShortenedIdentity(identity);
 
         return html`        
-        <li style='display: block;'>
-            <span><b>${topic}</b> ${shortenedIdentity}:  <b>${time}ms</b></span>
-        </li>`
+        <div style='display: block;'>
+            <span><b>${name}</b>  ${shortenedIdentity}:  <b>${time}ms</b></span>
+        </div>`
     }
 
     buildShortenedIdentity(identity) {
@@ -40,8 +38,8 @@ export default class SimpleMetrics {
         
     }
 
-    setMetrics(metrics) {
-        this.metrics = metrics;
-        return this;
-    }
+    // setMetrics(metrics) {
+    //     this.metrics = metrics;
+    //     return this;
+    // }
 }
