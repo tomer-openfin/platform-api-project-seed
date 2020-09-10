@@ -10,10 +10,9 @@
         "name": "Platform app seed local"
     },
     "platform": {
-        "uuid": "platform_customization_local",
+        "uuid": "performance-app",
         "applicationIcon": "https://openfin.github.io/golden-prototype/favicon.ico",
-        "autoShow": false,
-        "providerUrl": "http://localhost:5555/provider.html",
+        "autoShow": true,
         "permissions": {
             "ExternalWindow": {
               	"wrap": true
@@ -26,7 +25,6 @@
             }
         },
         "defaultWindowOptions": {
-            "url": "http://localhost:5555/platform-window.html",
             "contextMenu": true,
             "defaultWidth": 600,
             "defaultHeight": 600,
@@ -53,23 +51,8 @@
     "snapshot": {
         "windows": [
             {
-                "layout": {
-                    "content": [
-                        {
-                            "type": "stack",
-                            "content": [
-                                {
-                                    "type": "component",
-                                    "componentName": "view",
-                                    "componentState": {
-                                        "processAffinity": "ps_1",
-                                        "url": "https://cdn.openfin.co/embed-web/chart.html"
-                                    }
-                                }
-                            ]
-                        }
-                    ]
-                }
+                "name": "performance-window",
+                "url": "http://localhost:5555/performance-window.html"
             }
         ]
     }

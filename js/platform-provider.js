@@ -1,44 +1,56 @@
-import { generateExternalWindowSnapshot, restoreExternalWindowPositionAndState } from './external-window-snapshot.js';
+import Logger from './performance/logger.js';
 
-//We have customized our platform provider to keep track of a specific notepad window.
-//Look for the "my_platform_notes.txt" file and launch it in notepad or add another external window to this array
-const externalWindowsToTrack = [
-    {
-        name: 'Notepad',
-        // Note that this is only the beginning of the title.
-        // In `getExternalWindowByNameTitle`, we will just check that the title starts with this string.
-        // This is in order to work with both 'my_platform_notes' and 'my_platform_notes.txt', depending on
-        // the user's settings for viewing file extensions.
-        title: 'my_platform_notes'
-    }
-];
+const logger = new Logger();
+const identity = fin.me.identity;
+
+logger.push('platform', identity, 'before-platform-init', Date.now());
 
 fin.Platform.init({
     overrideCallback: async (Provider) => {
         class Override extends Provider {
             async getSnapshot() {
-                const snapshot = await super.getSnapshot();
+                logger.push('platform', identity, 'get-snapshot-start', Date.now(), '');
 
-                //we add an externalWindows section to our snapshot
-                const externalWindows = await generateExternalWindowSnapshot(externalWindowsToTrack);
-                return {
-                    ...snapshot,
-                    externalWindows
-                };
+                super.getSnapshot().then(snapshot => 
+                    logger.push('platform', identity, 'get-snapshot-resolved', Date.now(), '', snapshot)
+                );
             }
 
             async applySnapshot({ snapshot, options }) {
-
+                logger.push('platform', identity, 'apply-snapshot-start', Date.now(), '', {snapshot, options});
                 const originalPromise = super.applySnapshot({ snapshot, options });
-
-                //if we have a section with external windows we will use it.
-                if (snapshot.externalWindows) {
-                    await Promise.all(snapshot.externalWindows.map(async (i) => await restoreExternalWindowPositionAndState(i)));
-                }
-
+                originalPromise.then(payload => logger.push('platform', identity, 'apply-snapshot-end', Date.now(), '', payload));
                 return originalPromise;
+            }
+
+            async createView(options) {
+                const view = await super.createView(options);
+                setupViewListeners(fin.View.wrapSync(view.identity));
+                return view;
+            }
+
+            async createWindow(options) {
+                logger.push('window', window.identity, 'create-window-called', Date.now(), '', options);                
+                const win = await super.createWindow(options);
+
+                setupWindowListeners(win);
+
+                return win;
             }
         };
         return new Override();
     }
-});
+}).then(payload => logger.push('platform', identity, 'platform-init-resolved', Date.now(), '', payload));
+
+
+function setupViewListeners(view) {
+    view.on('target-changed', payload => logger.push('view', view.identity, 'target-changed-event', Date.now(), '', payload));
+    view.on('created', payload => logger.push('view', view.identity, 'created-event', Date.now(), '', payload));
+}
+
+function setupWindowListeners(window) {
+    window.on('layout-initialized', payload => logger.push('window', window.identity, 'layout-initialized-event', Date.now(), '', payload));
+    window.on('initialized', payload => logger.push('window', window.identity, 'window-initialized-event', Date.now(), '', payload));
+    window.on('shown', payload => logger.push('window', window.identity, 'shown-event', Date.now(), '', payload));
+    window.on('performance-report', payload => logger.push('window', window.identity, 'performance-report-event', Date.now(), '', payload));
+}
