@@ -2,6 +2,8 @@ import PerformanceEvent from './performance-event.js';
 
 export default class Logger {
     constructor() {
+        this.uuid = fin.me.identity.uuid;
+        this.channel = undefined;
         this.timeBaseline = Date.now();
         this.entities = [new PerformanceEvent(fin.me.identity, 'epoch', 'the logger is initialized',this.timeBaseline, 'platform')];
         this.registerChannel();
@@ -18,9 +20,15 @@ export default class Logger {
     }
 
     async registerChannel() {
-        this.channel = await fin.InterApplicationBus.Channel.create('internal-performance-channel');
+        this.channel = await fin.InterApplicationBus.Channel.connect('internal-performance-channel');
+        this.isConnected = true;
         // this.channel.onConnection(this.onConnection.bind(this));
-        // this.channel.onDisconnection(identity => identity.name === 'performance_window' ? this.isConnected = false : '');
+        this.channel.onDisconnection(() => this.isConnected = false);
+    }
+
+    onConnection() {
+        this.isConnected = true;
+        if(this.hasPendingDispatch) this.sendUpdate();
     }
 
     // isConnected() {
@@ -28,11 +36,11 @@ export default class Logger {
     // }
 
     async sendUpdate() {
-        // if(!this.isConnected()) {
-        //     this.hasPendingDispatch = true;
-        //     return;
-        // }
-
-        return this.channel.publish('update', this.entities);
+        if(!this.isConnected) {
+            this.hasPendingDispatch = true;
+            return;
+        }
+        this.hasPendingDispatch = false;
+        return this.channel.dispatch('update', {uuid: this.uuid, entities: this.entities});
     }
 }
